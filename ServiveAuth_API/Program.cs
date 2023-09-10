@@ -67,6 +67,11 @@ builder.Services.AddScoped<MongoDBRepository>();
 builder.Services.AddScoped<IServiceAuth, ServiceAuth>();
 builder.Services.AddScoped<IServicePropietor, ServicePropietor>();
 builder.Services.AddScoped<IServiceProperty, ServiceProperty>();
+builder.Services.AddScoped<IServiceSupport, ServiceSupport>();
+builder.Services.AddScoped<IServiceDocument, ServiceDocument>();
+builder.Services.AddScoped<IServicePayment, ServicePayment>();
+builder.Services.AddScoped<IServiceReservation, ServiceReservation>();
+builder.Services.AddScoped<IServiceAnnouncement, ServiceAnnouncement>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

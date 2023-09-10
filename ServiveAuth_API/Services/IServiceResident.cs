@@ -2,7 +2,7 @@
 
 namespace ServiceAuth_API.Services
 {
-    public interface IServiceResidentcs
+    public interface IServiceResident
     {
         Task<User> AddAsync(User resident);
         Task<User> UpdateAsync(User resident, Object id);

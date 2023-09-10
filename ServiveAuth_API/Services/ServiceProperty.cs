@@ -70,24 +70,34 @@ namespace ServiceAuth_API.Services
             return propertyDTOs;
         }
 
-        public Task<Property> GetPropertyById(string id)
+        public async Task<Property> GetPropertyById(string id)
         {
-            throw new NotImplementedException();
+            var propertyId = new ObjectId(id);
+            var property = await _properties.Find(property => property.Id == propertyId).FirstOrDefaultAsync();
+
+            if (property == null)
+            {
+                throw new Exception("No se encontró ninguna propiedad con este ID.");
+            }
+
+            return property;
         }
 
-        public Task RemoveProperty(Property propertyIn)
+        public async Task RemoveProperty(Property propertyIn)
         {
-            throw new NotImplementedException();
+            await _properties.DeleteOneAsync(property => property.Id == propertyIn.Id);
         }
 
-        public Task RemovePropertyById(string id)
+        public async Task RemovePropertyById(string id)
         {
-            throw new NotImplementedException();
+            var propertyId = new ObjectId(id);
+            await _properties.DeleteOneAsync(property => property.Id == propertyId);
         }
 
-        public Task UpdateProperty(string id, Property propertyIn)
+        public async Task UpdateProperty(string id, Property propertyIn)
         {
-            throw new NotImplementedException();
+            var propertyId = new ObjectId(id);
+            await _properties.ReplaceOneAsync(property => property.Id == propertyId, propertyIn);
         }
     }
 }
