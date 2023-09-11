@@ -12,7 +12,8 @@ namespace ServiceAuth_API.Models
         public string? UnitNumber { get; set; }
         public string? Size { get; set; }
         public List<string>? Amenities { get; set; }
-        public string? OwnerId { get; set; }
+        public ObjectId OwnerId { get; set; }
+        public string OwnerName { get; set; }
         public string? Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? LastModifiedAt { get; set; }

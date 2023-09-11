@@ -5,6 +5,7 @@ using ServiceAuth_API.Models;
 using ServiceAuth_API.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ServiceAuth_API.DTO;
 
 namespace ServiceAuth_API.Controllers
 {
@@ -21,16 +22,33 @@ namespace ServiceAuth_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAnnouncement(Announcement announcement)
+        public async Task<IActionResult> AddAnnouncement(AnnouncementDTO announcementDTO)
         {
+            var announcement = new Announcement
+            {
+                Id = ObjectId.Parse(announcementDTO.Id),
+                Title = announcementDTO.Title,
+                Content = announcementDTO.Content,
+                PostedDate = announcementDTO.PostedDate,
+                PostedBy = ObjectId.Parse(announcementDTO.PostedBy)
+            };
+
             var createdAnnouncement = await _serviceAnnouncement.AddAnnouncementAsync(announcement);
-            return CreatedAtAction(nameof(GetAnnouncementById), new { id = createdAnnouncement.Id }, createdAnnouncement);
+            var createdAnnouncementDTO = new AnnouncementDTO
+            {
+                Id = createdAnnouncement.Id.ToString(),
+                Title = createdAnnouncement.Title,
+                Content = createdAnnouncement.Content,
+                PostedDate = createdAnnouncement.PostedDate,
+                PostedBy = createdAnnouncement.PostedBy.ToString()
+            };
+            return CreatedAtAction(nameof(GetAnnouncementById), new { id = createdAnnouncementDTO.Id }, createdAnnouncementDTO);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAnnouncement(ObjectId id)
+        public async Task<IActionResult> DeleteAnnouncement(string id)
         {
-            await _serviceAnnouncement.DeleteAnnouncementAsync(id);
+            await _serviceAnnouncement.DeleteAnnouncementAsync(ObjectId.Parse(id));
             return Ok();
         }
 
@@ -38,20 +56,44 @@ namespace ServiceAuth_API.Controllers
         public async Task<IActionResult> GetAllAnnouncements()
         {
             var announcements = await _serviceAnnouncement.GetAllAnnouncementsAsync();
-            return Ok(announcements);
+            var announcementDTOs = announcements.ToList().ConvertAll(a => new AnnouncementDTO
+            {
+                Id = a.Id.ToString(),
+                Title = a.Title,
+                Content = a.Content,
+                PostedDate = a.PostedDate,
+                PostedBy = a.PostedBy.ToString()
+            });
+            return Ok(announcementDTOs);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAnnouncementById(ObjectId id)
+        public async Task<IActionResult> GetAnnouncementById(string id)
         {
-            var announcement = await _serviceAnnouncement.GetAnnouncementByIdAsync(id);
-            return Ok(announcement);
+            var announcement = await _serviceAnnouncement.GetAnnouncementByIdAsync(ObjectId.Parse(id));
+            var announcementDTO = new AnnouncementDTO
+            {
+                Id = announcement.Id.ToString(),
+                Title = announcement.Title,
+                Content = announcement.Content,
+                PostedDate = announcement.PostedDate,
+                PostedBy = announcement.PostedBy.ToString()
+            };
+            return Ok(announcementDTO);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAnnouncement(ObjectId id, Announcement announcement)
+        public async Task<IActionResult> UpdateAnnouncement(string id, AnnouncementDTO announcementDTO)
         {
-            await _serviceAnnouncement.UpdateAnnouncementAsync(id, announcement);
+            var announcement = new Announcement
+            {
+                Id = ObjectId.Parse(announcementDTO.Id),
+                Title = announcementDTO.Title,
+                Content = announcementDTO.Content,
+                PostedDate = announcementDTO.PostedDate,
+                PostedBy = ObjectId.Parse(announcementDTO.PostedBy)
+            };
+            await _serviceAnnouncement.UpdateAnnouncementAsync(ObjectId.Parse(id), announcement);
             return Ok();
         }
     }

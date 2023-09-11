@@ -32,8 +32,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("PolicyLocal",
     policy =>
     {
-        policy.WithOrigins("http://localhost:5001",
-                            "http://uneed.com",
+        policy.WithOrigins(
+            "*",
+            "http://localhost:5001",
+               "http://uneed.com",
                             "https://localhost:5173").AllowAnyHeader().AllowAnyMethod();
     });
 
@@ -60,6 +62,13 @@ builder.Services.AddCors(options =>
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:5173")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
 
 });
 //Active Services
@@ -72,8 +81,11 @@ builder.Services.AddScoped<IServiceDocument, ServiceDocument>();
 builder.Services.AddScoped<IServicePayment, ServicePayment>();
 builder.Services.AddScoped<IServiceReservation, ServiceReservation>();
 builder.Services.AddScoped<IServiceAnnouncement, ServiceAnnouncement>();
+builder.Services.AddScoped<IServiceResident, ServiceResident>();
 
 var app = builder.Build();
+app.UseCors("AllowSpecificOrigin");
+app.UseRouting();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

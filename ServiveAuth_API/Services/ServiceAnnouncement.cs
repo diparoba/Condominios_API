@@ -8,11 +8,15 @@ namespace ServiceAuth_API.Services
 {
     public class ServiceAnnouncement : IServiceAnnouncement
     {
+        private readonly MongoDBRepository _repository;
+        private readonly IConfiguration _configuration;
         private readonly IMongoCollection<Announcement> _announcements;
 
-        public ServiceAnnouncement(MongoDBRepository repository) // Asumiendo que tienes un MongoDBRepository
+        public ServiceAnnouncement(IConfiguration configuration, MongoDBRepository repository)
         {
-            _announcements = repository.database.GetCollection<Announcement>("Announcements");
+            _configuration = configuration;
+            _repository = repository;
+            _announcements = _repository.database.GetCollection<Announcement>("Announcements");
         }
 
         public async Task<Announcement> AddAnnouncementAsync(Announcement announcement)
